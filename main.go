@@ -28,7 +28,7 @@ func main() {
 	// 	orExit(gi.Destroy())
 	// }
 
-	gi, err := engine.LoadGame(&demos.HelloUniform{}, 800, 600)
+	gi, err := engine.LoadGame(&demos.MultipleAttribute{}, 800, 600)
 	orExit(err)
 	orExit(gi.Run())
 	orExit(gi.Destroy())

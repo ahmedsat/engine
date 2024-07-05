@@ -45,8 +45,8 @@ func createVBO(vertices []float32, attributes ...VertexAttribute) (VBO uint32) {
 	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*4, gl.Ptr(vertices), gl.STATIC_DRAW)
 
 	for _, attribute := range attributes {
-		gl.VertexAttribPointerWithOffset(uint32(attribute.Index), attribute.Size, gl.FLOAT, false, attribute.Stride*4, uintptr(attribute.Offset))
-		gl.EnableVertexAttribArray(0)
+		gl.VertexAttribPointerWithOffset(uint32(attribute.Index), attribute.Size, gl.FLOAT, false, attribute.Stride*4, uintptr(attribute.Offset*4))
+		gl.EnableVertexAttribArray(uint32(attribute.Index))
 	}
 
 	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
