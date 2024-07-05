@@ -53,7 +53,7 @@ func (h *HelloUniform) Render() (err error) {
 		R: 51, G: 77, B: 77, A: 255,
 	})
 	h.sh.Use()
-	engine.UniformFloat32(h.sh, "uTime", float32(engine.GetTime()))
+	h.sh.UniformFloat32("uTime", float32(engine.GetTime()))
 
 	engine.DrawVertices(h.triangle, 0, 6)
 	return

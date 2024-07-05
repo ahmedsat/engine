@@ -21,17 +21,17 @@ func init() {
 
 func main() {
 
-	// for _, g := range demos.Demos {
-	// 	gi, err := engine.LoadGame(g, 800, 600)
-	// 	orExit(err)
-	// 	orExit(gi.Run())
-	// 	orExit(gi.Destroy())
-	// }
+	for _, g := range demos.Demos {
+		gi, err := engine.LoadGame(g, 800, 600)
+		orExit(err)
+		orExit(gi.Run())
+		orExit(gi.Destroy())
+	}
 
-	gi, err := engine.LoadGame(&demos.MultipleAttribute{}, 800, 600)
-	orExit(err)
-	orExit(gi.Run())
-	orExit(gi.Destroy())
+	// gi, err := engine.LoadGame(&demos.MultipleAttribute{}, 800, 600)
+	// orExit(err)
+	// orExit(gi.Run())
+	// orExit(gi.Destroy())
 
 }
 
