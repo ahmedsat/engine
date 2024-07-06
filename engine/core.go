@@ -25,14 +25,24 @@ type gameInstance struct {
 	*glfw.Window
 	Game
 
-	defaultShaders Shader
+	StopDefaultShaders bool
+	defaultShaders     Shader
+	gameConfig         GameConfig
 }
 
-func LoadGame(g Game, width int, height int) (gi gameInstance, err error) {
+type GameConfig struct {
+	Width                   int
+	Height                  int
+	Title                   string
+	StopUsingDefaultShaders bool
+}
+
+func LoadGame(g Game, gameConfig GameConfig) (gi gameInstance, err error) {
 
 	gi.Game = g
+	gi.gameConfig = gameConfig
 
-	window, err := glfw.CreateWindow(width, height, g.Title(), nil, nil)
+	window, err := glfw.CreateWindow(gameConfig.Width, gameConfig.Height, gameConfig.Title, nil, nil)
 	if err != nil {
 		err = errors.Join(errors.New("can not create new window"), err)
 		return
@@ -46,17 +56,21 @@ func LoadGame(g Game, width int, height int) (gi gameInstance, err error) {
 		return
 	}
 
-	gl.Viewport(0, 0, int32(width), int32(height))
+	gl.Viewport(0, 0, int32(gameConfig.Width), int32(gameConfig.Height))
 	window.SetFramebufferSizeCallback(func(w *glfw.Window, width, height int) {
-		gl.Viewport(0, 0, int32(width), int32(height))
+		gi.gameConfig.Width = width
+		gi.gameConfig.Height = height
+		gl.Viewport(0, 0, int32(gameConfig.Width), int32(gameConfig.Height))
 	})
-
-	shader, err := CreateShader(defaultVert, defaultFrag)
-	if err != nil {
-		err = errors.Join(errors.New("can not load default shader"), err)
-		return
+	if !gameConfig.StopUsingDefaultShaders {
+		var shader Shader
+		shader, err = CreateShader(defaultVert, defaultFrag)
+		if err != nil {
+			err = errors.Join(errors.New("can not load default shader"), err)
+			return
+		}
+		gi.defaultShaders = shader
 	}
-	gi.defaultShaders = shader
 
 	err = gi.Init()
 
@@ -64,9 +78,9 @@ func LoadGame(g Game, width int, height int) (gi gameInstance, err error) {
 }
 
 func (gi gameInstance) Destroy() (err error) {
-
-	gi.defaultShaders.Delete()
-
+	if !gi.gameConfig.StopUsingDefaultShaders {
+		gi.defaultShaders.Delete()
+	}
 	if gi.Window != nil {
 		gi.Window.Destroy()
 	}
@@ -74,9 +88,9 @@ func (gi gameInstance) Destroy() (err error) {
 }
 
 func (gi *gameInstance) Run() (err error) {
-
-	gi.defaultShaders.Use()
-
+	if !gi.gameConfig.StopUsingDefaultShaders {
+		gi.defaultShaders.Use()
+	}
 	for !gi.ShouldClose() {
 
 		if gi.GetKey(glfw.KeyEscape) == glfw.Press {

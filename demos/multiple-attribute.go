@@ -9,7 +9,30 @@ import (
 
 func init() {
 
-	Demos = append(Demos, &MultipleAttribute{})
+	Demos = append(Demos, func() (err error) {
+		gi, err := engine.LoadGame(
+			&MultipleAttribute{},
+			engine.GameConfig{
+				Width:                   800,
+				Height:                  600,
+				Title:                   "MultipleAttribute",
+				StopUsingDefaultShaders: true,
+			},
+		)
+		if err != nil {
+			return
+		}
+		err = gi.Run()
+		if err != nil {
+			return
+		}
+
+		err = gi.Destroy()
+		if err != nil {
+			return
+		}
+		return
+	})
 }
 
 type MultipleAttribute struct {
@@ -50,6 +73,8 @@ func (h *MultipleAttribute) Init() (err error) {
 		engine.VertexAttribute{Index: 0, Size: 2, Stride: 5, Offset: 0},
 		engine.VertexAttribute{Index: 1, Size: 3, Stride: 5, Offset: 2})
 
+	h.sh.UniformFloat32("uOffset", 0.5)
+	h.sh.Use()
 	return
 }
 
@@ -57,7 +82,7 @@ func (h *MultipleAttribute) Render() (err error) {
 	engine.ClearBackground(color.NRGBA{
 		R: 51, G: 77, B: 77, A: 255,
 	})
-	h.sh.Use()
+
 	engine.DrawVertices(h.drawId, 0, 3)
 	return
 }

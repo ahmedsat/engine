@@ -7,7 +7,30 @@ import (
 )
 
 func init() {
-	Demos = append(Demos, &HelloEBO{})
+	Demos = append(Demos, func() (err error) {
+		gi, err := engine.LoadGame(
+			&HelloEBO{},
+			engine.GameConfig{
+				Width:                   800,
+				Height:                  600,
+				Title:                   "HelloEBO",
+				StopUsingDefaultShaders: false,
+			},
+		)
+		if err != nil {
+			return
+		}
+		err = gi.Run()
+		if err != nil {
+			return
+		}
+
+		err = gi.Destroy()
+		if err != nil {
+			return
+		}
+		return
+	})
 }
 
 type HelloEBO struct {

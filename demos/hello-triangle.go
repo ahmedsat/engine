@@ -7,15 +7,36 @@ import (
 )
 
 func init() {
-	Demos = append(Demos, &HelloTriangle{})
+	Demos = append(Demos, func() (err error) {
+		gi, err := engine.LoadGame(
+			&HelloTriangle{},
+			engine.GameConfig{
+				Width:                   800,
+				Height:                  600,
+				Title:                   "HelloTriangle",
+				StopUsingDefaultShaders: false,
+			},
+		)
+		if err != nil {
+			return
+		}
+		err = gi.Run()
+		if err != nil {
+			return
+		}
+
+		err = gi.Destroy()
+		if err != nil {
+			return
+		}
+		return
+	})
 }
 
 type HelloTriangle struct {
 	engine.BaseGame
 	triangle uint32
 }
-
-func (h *HelloTriangle) Title() string { return "HelloTriangle" }
 
 func (h *HelloTriangle) Init() (err error) {
 

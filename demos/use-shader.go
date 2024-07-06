@@ -8,7 +8,30 @@ import (
 )
 
 func init() {
-	Demos = append(Demos, &HelloShader{})
+	Demos = append(Demos, func() (err error) {
+		gi, err := engine.LoadGame(
+			&HelloShader{},
+			engine.GameConfig{
+				Width:                   800,
+				Height:                  600,
+				Title:                   "HelloShader",
+				StopUsingDefaultShaders: true,
+			},
+		)
+		if err != nil {
+			return
+		}
+		err = gi.Run()
+		if err != nil {
+			return
+		}
+
+		err = gi.Destroy()
+		if err != nil {
+			return
+		}
+		return
+	})
 }
 
 type HelloShader struct {
@@ -49,11 +72,11 @@ func (h *HelloShader) Init() (err error) {
 
 	h.triangle = engine.LoadVertices(vertices, engine.VertexAttribute{Index: 0, Size: 3, Stride: 3, Offset: 0})
 
+	h.shader.Use()
 	return
 }
 
 func (h *HelloShader) Render() (err error) {
-	h.shader.Use()
 	engine.ClearBackground(color.NRGBA{
 		R: 51, G: 77, B: 77, A: 255,
 	})

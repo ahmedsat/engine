@@ -5,13 +5,14 @@ package main
 // TODO: 	pass screen resolution to shader via uniform
 // TODO: 	enable custom resize callback
 
+// FIXME: cant move shader out of loop in MultipleAttribute
+
 import (
 	"fmt"
 	"os"
 	"runtime"
 
 	"github.com/ahmedsat/engine/demos"
-	"github.com/ahmedsat/engine/engine"
 )
 
 func init() {
@@ -22,13 +23,15 @@ func init() {
 func main() {
 
 	for _, g := range demos.Demos {
-		gi, err := engine.LoadGame(g, 800, 600)
-		orExit(err)
-		orExit(gi.Run())
-		orExit(gi.Destroy())
+		orExit(g())
 	}
 
-	// gi, err := engine.LoadGame(&demos.MultipleAttribute{}, 800, 600)
+	// gi, err := engine.LoadGame(&demos.MultipleAttribute{}, engine.GameConfig{
+	// 	Width:                   800,
+	// 	Height:                  600,
+	// 	Title:                   "MultipleAttribute",
+	// 	StopUsingDefaultShaders: true,
+	// })
 	// orExit(err)
 	// orExit(gi.Run())
 	// orExit(gi.Destroy())
