@@ -6,6 +6,7 @@ import (
 
 	"github.com/ahmedsat/engine/math/vectors"
 	"github.com/go-gl/gl/v4.5-core/gl"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 var defaultVert = `
@@ -33,16 +34,27 @@ func (sh Shader) Use() { gl.UseProgram(uint32(sh)) }
 
 func (sh Shader) Delete() { gl.DeleteShader(uint32(sh)) }
 
-func (sh Shader) UniformVec4float32(name string, vec vectors.Vec4f32) {
+func (sh Shader) Uniform4f(name string, vec vectors.Vec4f32) {
 	vertexColorLocation := gl.GetUniformLocation(uint32(sh), gl.Str(name+"\x00"))
 	gl.UseProgram(uint32(sh))
 	gl.Uniform4f(vertexColorLocation, vec.X, vec.Y, vec.Z, vec.W)
 }
 
-func (sh Shader) UniformFloat32(name string, value float32) {
+func (sh Shader) Uniform1f(name string, value float32) {
 	vertexColorLocation := gl.GetUniformLocation(uint32(sh), gl.Str(name+"\x00"))
 	gl.UseProgram(uint32(sh))
 	gl.Uniform1f(vertexColorLocation, value)
+}
+
+func (sh Shader) Uniform2f(name string, vec vectors.Vec2f32) {
+	vertexColorLocation := gl.GetUniformLocation(uint32(sh), gl.Str(name+"\x00"))
+	gl.UseProgram(uint32(sh))
+	gl.Uniform2f(vertexColorLocation, vec.X, vec.Y)
+}
+
+func (sh Shader) ScreenResolutionUniforms(window *glfw.Window) {
+	w, h := window.GetSize()
+	sh.Uniform2f("screenResolution", vectors.Vec2f32{X: float32(w), Y: float32(h)})
 }
 
 func CreateShader(vertexSource, fragmentSource string) (sh Shader, err error) {

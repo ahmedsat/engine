@@ -5,22 +5,26 @@ import (
 	"os"
 
 	"github.com/ahmedsat/engine/engine"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 func init() {
 	Demos = append(Demos, func() (err error) {
+		game := &ResizeWindow{}
 		gi, err := engine.LoadGame(
-			&HelloUniform{},
+			game,
 			engine.GameConfig{
 				Width:                   800,
 				Height:                  600,
-				Title:                   "HelloUniform",
+				Title:                   "ResizeWindow",
 				StopUsingDefaultShaders: true,
+				Resizable:               true,
 			},
 		)
 		if err != nil {
 			return
 		}
+		game.Window = gi.Window
 		err = gi.Run()
 		if err != nil {
 			return
@@ -34,15 +38,16 @@ func init() {
 	})
 }
 
-type HelloUniform struct {
+type ResizeWindow struct {
 	engine.BaseGame
 	triangle uint32
 	sh       engine.Shader
+	Window   *glfw.Window
 }
 
-func (h *HelloUniform) Title() string { return "HelloUniform" }
+func (h *ResizeWindow) Title() string { return "ResizeWindow" }
 
-func (h *HelloUniform) Init() (err error) {
+func (h *ResizeWindow) Init() (err error) {
 
 	vertices := []float32{
 		// first triangle
@@ -56,7 +61,7 @@ func (h *HelloUniform) Init() (err error) {
 	}
 
 	vert, _ := engine.GetDefaultShader()
-	frag, err := os.ReadFile("shaders/time-uniform.frag")
+	frag, err := os.ReadFile("shaders/resize-window.frag")
 	if err != nil {
 		return
 	}
@@ -72,12 +77,13 @@ func (h *HelloUniform) Init() (err error) {
 	return
 }
 
-func (h *HelloUniform) Render() (err error) {
+func (h *ResizeWindow) Render() (err error) {
 	engine.ClearBackground(color.NRGBA{
 		R: 51, G: 77, B: 77, A: 255,
 	})
 	h.sh.Uniform1f("uTime", float32(engine.GetTime()))
 
 	engine.DrawVertices(h.triangle, 0, 6)
+	h.sh.ScreenResolutionUniforms(h.Window)
 	return
 }

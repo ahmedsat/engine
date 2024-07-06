@@ -1,11 +1,6 @@
 package main
 
-// TODO: implement don't use default shader
-// TODO: implement resizable screen
-// TODO: 	pass screen resolution to shader via uniform
-// TODO: 	enable custom resize callback
-
-// FIXME: cant move shader out of loop in MultipleAttribute
+//// TODO: add fps limit
 
 import (
 	"fmt"
@@ -26,15 +21,33 @@ func main() {
 		orExit(g())
 	}
 
-	// gi, err := engine.LoadGame(&demos.MultipleAttribute{}, engine.GameConfig{
-	// 	Width:                   800,
-	// 	Height:                  600,
-	// 	Title:                   "MultipleAttribute",
-	// 	StopUsingDefaultShaders: true,
-	// })
-	// orExit(err)
-	// orExit(gi.Run())
-	// orExit(gi.Destroy())
+	// game := &demos.ResizeWindow{}
+	// gi, err := engine.LoadGame(
+	// 	game,
+	// 	engine.GameConfig{
+	// 		Width:                   800,
+	// 		Height:                  600,
+	// 		Title:                   "ResizeWindow",
+	// 		StopUsingDefaultShaders: true,
+	// 		Resizable:               true,
+	// 		ResizeCallback: func() {
+	// 			println("resized")
+	// 		},
+	// 	},
+	// )
+	// if err != nil {
+	// 	return
+	// }
+	// game.Window = gi.Window
+	// err = gi.Run()
+	// if err != nil {
+	// 	return
+	// }
+
+	// err = gi.Destroy()
+	// if err != nil {
+	// 	return
+	// }
 
 }
 

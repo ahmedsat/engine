@@ -73,7 +73,7 @@ func (h *MultipleAttribute) Init() (err error) {
 		engine.VertexAttribute{Index: 0, Size: 2, Stride: 5, Offset: 0},
 		engine.VertexAttribute{Index: 1, Size: 3, Stride: 5, Offset: 2})
 
-	h.sh.UniformFloat32("uOffset", 0.5)
+	h.sh.Uniform1f("uOffset", 0.5)
 	h.sh.Use()
 	return
 }

@@ -14,7 +14,6 @@ func init() {
 		panic(errors.New("can not initialize GLFW"))
 	}
 
-	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, 4)
 	glfw.WindowHint(glfw.ContextVersionMinor, 5)
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
@@ -35,12 +34,20 @@ type GameConfig struct {
 	Height                  int
 	Title                   string
 	StopUsingDefaultShaders bool
+	Resizable               bool
+	ResizeCallback          func()
 }
 
 func LoadGame(g Game, gameConfig GameConfig) (gi gameInstance, err error) {
 
 	gi.Game = g
 	gi.gameConfig = gameConfig
+
+	if gameConfig.Resizable {
+		glfw.WindowHint(glfw.Resizable, glfw.True)
+	} else {
+		glfw.WindowHint(glfw.Resizable, glfw.False)
+	}
 
 	window, err := glfw.CreateWindow(gameConfig.Width, gameConfig.Height, gameConfig.Title, nil, nil)
 	if err != nil {
@@ -57,11 +64,16 @@ func LoadGame(g Game, gameConfig GameConfig) (gi gameInstance, err error) {
 	}
 
 	gl.Viewport(0, 0, int32(gameConfig.Width), int32(gameConfig.Height))
+
 	window.SetFramebufferSizeCallback(func(w *glfw.Window, width, height int) {
 		gi.gameConfig.Width = width
 		gi.gameConfig.Height = height
-		gl.Viewport(0, 0, int32(gameConfig.Width), int32(gameConfig.Height))
+		gl.Viewport(0, 0, int32(gi.gameConfig.Width), int32(gi.gameConfig.Height))
+		if gameConfig.ResizeCallback != nil {
+			gameConfig.ResizeCallback()
+		}
 	})
+
 	if !gameConfig.StopUsingDefaultShaders {
 		var shader Shader
 		shader, err = CreateShader(defaultVert, defaultFrag)
@@ -103,6 +115,7 @@ func (gi *gameInstance) Run() (err error) {
 
 		gi.SwapBuffers()
 		glfw.PollEvents()
+
 	}
 
 	return
